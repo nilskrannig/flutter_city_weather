@@ -31,7 +31,7 @@ class _LocationScreenState extends State<LocationScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/location_background.jpg'),
+            image: _getLocationScreenBackgroundImage(),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
                 Colors.white.withOpacity(0.8), BlendMode.dstATop),
@@ -114,7 +114,7 @@ class _LocationScreenState extends State<LocationScreen> {
         cityName = '';
         temperature = 0;
         weatherConditionMessage = 'Unable to get weather data.';
-        weatherIcon = 'Error';
+        weatherIcon = 'oops';
         return;
       }
       cityName = weatherData['name'];
@@ -126,5 +126,10 @@ class _LocationScreenState extends State<LocationScreen> {
       temperature = temp.toInt();
       weatherConditionMessage = weatherModel.getMessage(temperature);
     });
+  }
+
+  ImageProvider _getLocationScreenBackgroundImage() {
+    return AssetImage('assets/images/location_background.jpg');
+//    return NetworkImage();
   }
 }

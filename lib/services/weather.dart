@@ -1,22 +1,35 @@
-import 'package:nilskrannig/services/location.dart';
-import 'package:nilskrannig/services/networking.dart';
+import 'package:nilskrannig/utilities/secret_helper.dart';
+
+import 'networking.dart';
+import 'location.dart';
 
 const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherModel {
+  String _weatherApiKey;
+  SecretHelper _secretHelper;
+
+  WeatherModel() {
+    _secretHelper = SecretHelper();
+  }
+
   Future<dynamic> getCityWeather(String cityName) async {
+    await _getWeatherApiKey();
+
     NetworkHelper networkHelper = NetworkHelper(
-        '$openWeatherMapURL?q=$cityName&appid=$weatherApiKey&units=metric');
+        '$openWeatherMapURL?q=$cityName&appid=$_weatherApiKey&units=metric');
 
     return await networkHelper.getData();
   }
 
   Future<dynamic> getLocationWeather() async {
+    await _getWeatherApiKey();
+
     Location location = Location();
     await location.getCurrentLocation();
 
     NetworkHelper networkHelper = NetworkHelper(
-        '$openWeatherMapURL?lat=${location.latitude}&lon=${location.longitude}&appid=$weatherApiKey&units=metric');
+        '$openWeatherMapURL?lat=${location.latitude}&lon=${location.longitude}&appid=$_weatherApiKey&units=metric');
 
     return await networkHelper.getData();
   }
@@ -50,6 +63,12 @@ class WeatherModel {
       return 'You\'ll need 🧣 and 🧤';
     } else {
       return 'Bring a 🧥 just in case';
+    }
+  }
+
+  Future _getWeatherApiKey() async {
+    if (_weatherApiKey == null) {
+      _weatherApiKey = await _secretHelper.loadApiKey();
     }
   }
 }
